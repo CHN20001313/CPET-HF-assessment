@@ -29,7 +29,7 @@ col1, col2 = st.columns(2)
 with col1:
     st.header("Input Features")
     LVEDD = st.number_input("Left Ventricular End-Diastolic Diameter (LVEDD, mm)", min_value=10.0, max_value=100.0, value=45.0, step=0.1)
-    BRRPEAK = st.number_input("Breathing reserve ratio peak(BR peak, bpm)", min_value=0.0, max_value=100.0, value=30.0, step=0.1)
+    BRRPEAK = st.number_input("Breathing reserve ratio peak(BR peak, %)", min_value=0.0, max_value=100.0, value=30.0, step=0.1)
     LDH = st.number_input("Lactate dehydrogenase (LDH, U/L)", min_value=0.0, max_value=10000.0, value=120.0, step=0.1)
     VO2KGPEAK = st.number_input("Oxygen consumption peak (VO2 peak, ml/kg/min)", min_value=0.0, max_value=100.0, value=10.0, step=0.1)
     SBPpeak = st.number_input("Systolic blood pressure (SBP peak, mmHg)", min_value=0.0, max_value=300.0, value=150.0, step=1.0)
