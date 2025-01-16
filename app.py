@@ -44,7 +44,7 @@ with col1:
             time.sleep(3)  # 模拟计算时间
         st.success("Calculation complete!")
         # 特征编码
-        feature_names = ["LVEDD", "BR peak", "LDH", "VO2 peak", "SBPp eak", "VE/VCO2 slope", "VE peak", "EF", "cTNI", "CKMB"]
+        feature_names = ["LVEDD", "BR peak", "LDH", "VO2 peak", "SBP peak", "VE/VCO2 slope", "VE peak", "EF", "cTNI", "CKMB"]
         encoded_features = [
             LVEDD, BRRPEAK, LDH, VO2KGPEAK, SBPpeak, VEVCO2SLOPE, VEKGpeak, EF, TNI ,CKMB]
         input_features = np.array(encoded_features).reshape(1, -1)
