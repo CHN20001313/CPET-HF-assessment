@@ -13,9 +13,9 @@ model.load_model("xgboost_model.json")
 st.set_page_config(layout="wide")
 
 # 页面标题和简介
-st.title("AMI Follow-up period HF Probability Predictor")
+st.title("CPET Based Post-AMI HFrEF/HFmrEF Probability Predictor")
 st.markdown("""
-This tool predicts the likelihood of HFrEF and HFmrEF during follow-up period after acute myocardial infarction (AMI) based on patient characteristics.
+This tool predicts the likelihood of HFrEF/HFmrEF  after acute myocardial infarction (AMI) based on patient characteristics.
 
 **Instructions:**
 - Fill in your details on the left.
@@ -56,24 +56,24 @@ with col1:
 
         # 风险分组逻辑
         if predicted_probability < 0.425285:
-            risk_group = "Low Follow-up period HF Probability"
+            risk_group = "Low HFrEF/HFmrEF Probability"
             risk_color = "green"
             advice = (
-                "You have a low probability of follow-up period heart failure. Please consult a healthcare professional as soon as possible "
-                "for detailed evaluation and treatment guidance."
+                "You have a low probability of HFrEF/HFmrEF."
             )
         elif 0.425285 <= predicted_probability <= 0.544843:
-            risk_group = "Medium Follow-up period HF Probability"
+            risk_group = "Medium HFrEF/HFmrEF Probability"
             risk_color = "orange"
             advice = (
-                "Your probability of follow-up period heart failure is moderate. It is recommended to monitor your health closely "
+                "Your probability of HFrEF/HFmrEF is moderate. It is recommended to monitor your health closely "
                 "and consider consulting a healthcare professional for further evaluation."
             )
         else:
-            risk_group = "High Follow-up period HF Probability"
+            risk_group = "High HFrEF/HFmrEF Probability"
             risk_color = "red"
-            advice = "You have a high probability of follow-up period heart failure."
-
+            advice = ("You have a high probability of HFrEF/HFmrEF.Please consult a healthcare professional as soon as possible "
+                "for detailed evaluation and treatment guidance."
+            )
 
 
         # 显示结果在右侧
@@ -91,7 +91,7 @@ with col1:
 
             # SHAP 力图
             st.header(
-                f"Based on feature values, predicted probability of follow-up period HF is {predicted_probability * 100:.2f}%")
+                f"Based on feature values, predicted probability of HFrEF/HFmrEF is {predicted_probability * 100:.2f}%")
             explainer = shap.TreeExplainer(model)
             shap_values = explainer.shap_values(pd.DataFrame(input_features, columns=feature_names))
             shap.force_plot(
