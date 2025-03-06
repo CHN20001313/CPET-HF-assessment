@@ -7,7 +7,7 @@ import xgboost as xgb
 import time
 # 加载 JSON 格式模型
 model = xgb.Booster()
-model.load_model("xgboost_model.json")
+model.load_model("xgboost_model.model")
 
 # 设置页面宽度
 st.set_page_config(layout="wide")
