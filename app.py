@@ -52,7 +52,7 @@ with col1:
         dmatrix = xgb.DMatrix(input_features)
 
         # 预测概率
-        probabilities = model.predict(dmatrix)
+        probabilities = model.predict(dmatrix, ntree_limit=12)
         predicted_probability = probabilities[0]
 
         # 风险分组逻辑
