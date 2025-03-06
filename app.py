@@ -55,6 +55,9 @@ with col1:
         probabilities = model.predict(dmatrix, iteration_range=(0, 12))
         predicted_probability = probabilities[0]
 
+        # 新增模块：显示 risk score (预测概率 * 10)
+        risk_score = predicted_probability * 10
+        st.markdown(f"**Your risk score is: {risk_score:.2f}**")
         # 风险分组逻辑
         if predicted_probability < 0.248145:
             risk_group = "Low HFrEF/HFmrEF Probability"
@@ -90,11 +93,13 @@ with col1:
             )
             st.write(advice)
 
+
+
             # SHAP 力图
             st.header(
                 f"Based on feature values, predicted probability of HFrEF/HFmrEF is {predicted_probability * 100:.2f}%")
             explainer = shap.TreeExplainer(model)
-            shap_values = explainer.shap_values(pd.DataFrame(input_features, columns=feature_names), iteration_range=(0, 12))
+            shap_values = explainer.shap_values(pd.DataFrame(input_features, columns=feature_names), tree_limit=12)
             shap.force_plot(
                 explainer.expected_value,
                 shap_values[0],
