@@ -52,7 +52,7 @@ with col1:
         dmatrix = xgb.DMatrix(input_features)
 
         # 预测概率
-        probabilities = model.predict(dmatrix, ntree_limit=12)
+        probabilities = model.predict(dmatrix, iteration_range=(0, 12))
         predicted_probability = probabilities[0]
 
         # 风险分组逻辑
@@ -94,7 +94,7 @@ with col1:
             st.header(
                 f"Based on feature values, predicted probability of HFrEF/HFmrEF is {predicted_probability * 100:.2f}%")
             explainer = shap.TreeExplainer(model)
-            shap_values = explainer.shap_values(pd.DataFrame(input_features, columns=feature_names))
+            shap_values = explainer.shap_values(pd.DataFrame(input_features, columns=feature_names), iteration_range=(0, 12))
             shap.force_plot(
                 explainer.expected_value,
                 shap_values[0],
