@@ -37,7 +37,7 @@ with col1:
     EF = st.number_input("Ejection fraction (EF, %)", min_value=50.0, max_value=100.0, value=55.0, step=0.1)
     TNI = st.number_input("Troponin I (cTNI, μg/L)", min_value=0.0, max_value=100000.0, value=10.0, step=0.1)
     PETCO2peak = st.number_input("Peak prtial pressure of end tidal carbon dioxide (PETCO2 peak, mmHg)", min_value=0.0, max_value=100.0, value=40.0, step=0.1)
-    VTpeak = st.number_input("Peak tidal volume (VT peak, L)", min_value=0.0, max_value=10.0, value=2.0, step=0.01)
+    VTpeak = st.number_input("Peak tidal volume (VT peak, L/min)", min_value=0.0, max_value=10.0, value=2.0, step=0.01)
 
 
     if st.button("Predict"):
@@ -55,9 +55,7 @@ with col1:
         probabilities = model.predict(dmatrix, iteration_range=(0, 12))
         predicted_probability = probabilities[0]
 
-        # 新增模块：显示 risk score (预测概率 * 10)
-        risk_score = predicted_probability * 10
-        st.markdown(f"**Your risk score is: {risk_score:.2f}**")
+
         # 风险分组逻辑
         if predicted_probability < 0.248145:
             risk_group = "Low HFrEF/HFmrEF Probability"
@@ -92,7 +90,9 @@ with col1:
                 unsafe_allow_html=True
             )
             st.write(advice)
-
+            # 新增模块：显示 risk score (预测概率 * 10)
+            risk_score = predicted_probability * 10
+            st.markdown(f"**Your risk score is: {risk_score:.2f}**")
 
 
             # SHAP 力图
