@@ -19,14 +19,10 @@ This tool predicts the likelihood of HFrEF/HFmrEF after acute myocardial infarct
 
 **Instructions:**
 - Fill in your details on the left.
-- Click **Predict** to see your HF probability and recommendations.
+- Click **Predict** to see your HFrEF/HFmrEF probability and recommendations.
 """)
 
-# 创建两列布局
-col1, col2 = st.columns(2)
-
-# 左侧输入区域
-with col1:
+with st.sidebar:
     st.header("Input Features")
     BNP = st.number_input("NT-pro BNP (pg/mL)", min_value=0.0, max_value=100000.0, value=1.0, step=0.1)
     LVEDD = st.number_input("Left Ventricular End-Diastolic Diameter (LVEDD, mm)", min_value=10.0, max_value=100.0, value=45.0, step=0.1)
@@ -39,8 +35,12 @@ with col1:
     PETCO2peak = st.number_input("Peak prtial pressure of end tidal carbon dioxide (PETCO2 peak, mmHg)", min_value=0.0, max_value=100.0, value=40.0, step=0.1)
     VTpeak = st.number_input("Peak tidal volume (VT peak, L/min)", min_value=0.0, max_value=10.0, value=2.0, step=0.01)
 
+    predict_button = st.button("Predict")
 
-    if st.button("Predict"):
+    # 右侧显示预测结果
+    col2 = st.container()
+
+    if predict_button:
         with st.spinner("Calculating..."):
             time.sleep(3)  # 模拟计算时间
         st.success("Calculation complete!")
