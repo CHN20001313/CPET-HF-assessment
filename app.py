@@ -19,7 +19,7 @@ This tool predicts the likelihood of heart failure (HF) after acute myocardial i
 
 **Instructions:**
 - Fill in your details on the left.
-- Click **Predict** to see your HFrEF/HFmrEF probability and recommendations.
+- Click **Predict** to see your HF probability and recommendations.
 """)
 
 # 创建两列布局，左侧输入，右侧显示预测结果
@@ -27,7 +27,8 @@ col1, col2 = st.columns([1, 2])  # 左侧 1/3, 右侧 2/3
 
 # **左侧：输入参数**
 with col1:
-    st.sidebar.header("Input Features")
+    with st.sidebar:
+        st.header("Input Features")
     BNP = st.sidebar.number_input("NT-pro BNP (pg/mL)", min_value=0.0, max_value=100000.0, value=1.0, step=0.1)
     LVEDD = st.sidebar.number_input("Left Ventricular End-Diastolic Diameter (LVEDD, mm)", min_value=10.0, max_value=100.0, value=45.0, step=0.1)
     VO2KGPEAK = st.sidebar.number_input("Oxygen consumption peak (VO2 peak, ml/kg/min)", min_value=0.0, max_value=100.0, value=10.0, step=0.1)
@@ -79,29 +80,37 @@ if predict_button:
 
     # **显示结果在右侧**
     with col2:
-        st.header("Prediction Results")
-        st.markdown(
-            f"<h3 style='font-size:24px; color:{risk_color};'>Risk Group: {risk_group}</h3>",
-            unsafe_allow_html=True
-        )
-        st.write(advice)
+        with st.container():
+            st.markdown(
+                f"<h2 style='margin-top: 0px; color:{risk_color};'>Prediction Results</h2>",
+                unsafe_allow_html=True
+            )
+            st.markdown(
+                f"<h3 style='color:{risk_color};'>Risk Group: {risk_group}</h3>",
+                unsafe_allow_html=True
+            )
+            st.write(advice)
 
-        # 显示风险评分
-        risk_score = predicted_probability * 10
-        st.markdown(f"**Your risk score is: {risk_score:.2f}**")
+            # **风险评分**
+            risk_score = predicted_probability * 10
+            st.markdown(f"**Your risk score is: {risk_score:.2f}**")
 
-        # **SHAP 解释**
-        st.header(f"Predicted probability of HFis {predicted_probability * 100:.2f}%")
-        explainer = shap.TreeExplainer(model)
-        shap_values = explainer.shap_values(pd.DataFrame(input_features, columns=feature_names), tree_limit=12)
+            # **SHAP 解释**
+            st.markdown(
+                f"<h3>Predicted probability of HF is {predicted_probability * 100:.2f}%</h3>",
+                unsafe_allow_html=True
+            )
 
-        # **调整 SHAP 力图渲染**
-        fig, ax = plt.subplots(figsize=(10, 4))
-        shap.force_plot(
-            explainer.expected_value,
-            shap_values[0],
-            pd.DataFrame(input_features, columns=feature_names),
-            matplotlib=True
-        )
-        plt.savefig("shap_force_plot.png", bbox_inches="tight", dpi=1200)
-        st.image("shap_force_plot.png", caption="Feature Contribution (SHAP Force Plot)")
+            explainer = shap.TreeExplainer(model)
+            shap_values = explainer.shap_values(pd.DataFrame(input_features, columns=feature_names), tree_limit=12)
+
+            # **调整 SHAP 力图**
+            fig, ax = plt.subplots(figsize=(10, 4))
+            shap.force_plot(
+                explainer.expected_value,
+                shap_values[0],
+                pd.DataFrame(input_features, columns=feature_names),
+                matplotlib=True
+            )
+            plt.savefig("shap_force_plot.png", bbox_inches="tight", dpi=1200)
+            st.image("shap_force_plot.png", caption="Feature Contribution (SHAP Force Plot)")
