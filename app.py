@@ -81,10 +81,7 @@ if predict_button:
     # **显示结果在右侧**
     with col2:
         with st.container():
-            st.markdown(
-                f"<h2 style='margin-top: 0px; color:{risk_color};'>Prediction Results</h2>",
-                unsafe_allow_html=True
-            )
+            st.header("Prediction Results")
             st.markdown(
                 f"<h3 style='color:{risk_color};'>Risk Group: {risk_group}</h3>",
                 unsafe_allow_html=True
