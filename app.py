@@ -26,8 +26,8 @@ This tool predicts the likelihood of heart failure (HF) after acute myocardial i
 col1, col2 = st.columns([1, 2])  # 左侧 1/3, 右侧 2/3
 
 # **左侧：输入参数**
-    with st.sidebar:
-        st.header("Input Features")
+with st.sidebar:
+    st.header("Input Features")
     VO2KGPEAK = st.sidebar.number_input("Oxygen consumption peak (VO2 peak, ml/kg/min)", min_value=0.0, max_value=100.0, value=15.0, step=0.1)
     BNP = st.sidebar.number_input("NT-pro BNP (pg/mL)", min_value=0.0, max_value=100000.0, value=1.0, step=0.1)
     EF = st.sidebar.number_input("Ejection fraction (EF, %)", min_value=50.0, max_value=100.0, value=55.0, step=0.1)
