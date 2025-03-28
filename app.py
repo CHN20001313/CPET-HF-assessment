@@ -26,19 +26,18 @@ This tool predicts the likelihood of heart failure (HF) after acute myocardial i
 col1, col2 = st.columns([1, 2])  # 左侧 1/3, 右侧 2/3
 
 # **左侧：输入参数**
-with col1:
     with st.sidebar:
         st.header("Input Features")
+    VO2KGPEAK = st.sidebar.number_input("Oxygen consumption peak (VO2 peak, ml/kg/min)", min_value=0.0, max_value=100.0, value=15.0, step=0.1)
     BNP = st.sidebar.number_input("NT-pro BNP (pg/mL)", min_value=0.0, max_value=100000.0, value=1.0, step=0.1)
-    LVEDD = st.sidebar.number_input("Left Ventricular End-Diastolic Diameter (LVEDD, mm)", min_value=10.0, max_value=100.0, value=45.0, step=0.1)
-    VO2KGPEAK = st.sidebar.number_input("Oxygen consumption peak (VO2 peak, ml/kg/min)", min_value=0.0, max_value=100.0, value=10.0, step=0.1)
-    LDH = st.sidebar.number_input("Lactate dehydrogenase (LDH, U/L)", min_value=0.0, max_value=10000.0, value=120.0, step=0.1)
-    VEVCO2SLOPE = st.sidebar.number_input("Minute ventilation/carbon dioxide production slope (VE/VCO2 slope)", min_value=0.0, max_value=100.0, value=20.0, step=0.1)
-    CKMB = st.sidebar.number_input("CK-MB (U/L)", min_value=0.0, max_value=100000.0, value=1.0, step=0.1)
     EF = st.sidebar.number_input("Ejection fraction (EF, %)", min_value=50.0, max_value=100.0, value=55.0, step=0.1)
-    TNI = st.sidebar.number_input("Troponin I (cTNI, μg/L)", min_value=0.0, max_value=100000.0, value=10.0, step=0.1)
-    PETCO2peak = st.sidebar.number_input("Peak partial pressure of end tidal carbon dioxide (PETCO2 peak, mmHg)", min_value=0.0, max_value=100.0, value=40.0, step=0.1)
+    VEVCO2SLOPE = st.sidebar.number_input("Minute ventilation/carbon dioxide production slope (VE/VCO2 slope)", min_value=0.0, max_value=100.0, value=20.0, step=0.1)
+    LDH = st.sidebar.number_input("Lactate dehydrogenase (LDH, U/L)", min_value=0.0, max_value=10000.0, value=120.0, step=0.1)
+    CKMB = st.sidebar.number_input("CK-MB (U/L)", min_value=0.0, max_value=100000.0, value=1.0, step=0.1)
+    LVEDD = st.sidebar.number_input("Left Ventricular End-Diastolic Diameter (LVEDD, mm)", min_value=10.0, max_value=100.0, value=45.0, step=0.1)
+    TNI = st.sidebar.number_input("Troponin I (TNI, μg/L)", min_value=0.0, max_value=100000.0, value=10.0, step=0.1)
     VTpeak = st.sidebar.number_input("Peak tidal volume (VT peak, L/min)", min_value=0.0, max_value=10.0, value=2.0, step=0.01)
+    Wpeak = st.sidebar.number_input("Power peak (W)", min_value=0.0, max_value=500.0, value=100.0, step=0.1)
 
     predict_button = st.sidebar.button("Predict")
 
@@ -49,21 +48,21 @@ if predict_button:
     st.success("Calculation complete!")
 
     # 特征编码
-    feature_names = ["NT-pro BNP", "LVEDD", "VO2 peak", "LDH", "VE/VCO2 slope", "CK-MB", "EF", "cTNI", "PETCO2 peak", "VT peak"]
-    encoded_features = [BNP, LVEDD, VO2KGPEAK, LDH, VEVCO2SLOPE, CKMB, EF, TNI, PETCO2peak, VTpeak]
+    feature_names = ["VO2 peak", "NT-pro BNP", "EF", "VE/VCO2 slope", "LDH", "CKMB", "LVEDD", "TNI", "VT peak", "Power peak"]
+    encoded_features = [VO2KGPEAK, BNP, EF, VEVCO2SLOPE, LDH, CKMB, LVEDD, TNI, VTpeak, Wpeak]
     input_features = np.array(encoded_features).reshape(1, -1)
     dmatrix = xgb.DMatrix(input_features)
 
     # 预测概率
-    probabilities = model.predict(dmatrix, iteration_range=(0, 12))
+    probabilities = model.predict(dmatrix, iteration_range=(0, 13))
     predicted_probability = probabilities[0]
 
     # 风险分组逻辑
-    if predicted_probability < 0.248145:
+    if predicted_probability < 0.172039:
         risk_group = "Low HF Probability"
         risk_color = "green"
         advice = "You have a low probability of HF."
-    elif 0.248145 <= predicted_probability <= 0.338074:
+    elif 0.172039 <= predicted_probability <= 0.478812:
         risk_group = "Medium HF Probability"
         risk_color = "orange"
         advice = (
@@ -79,7 +78,7 @@ if predict_button:
         )
 
     # **显示结果在右侧**
-    with col2:
+    with col1:
         with st.container():
             st.header("Prediction Results")
             st.markdown(
@@ -99,9 +98,10 @@ if predict_button:
             )
 
             explainer = shap.TreeExplainer(model)
-            shap_values = explainer.shap_values(pd.DataFrame(input_features, columns=feature_names), tree_limit=12)
+            shap_values = explainer.shap_values(pd.DataFrame(input_features, columns=feature_names), tree_limit=13)
 
             # **调整 SHAP 力图**
+            with col2:
             fig, ax = plt.subplots(figsize=(10, 4))
             shap.force_plot(
                 explainer.expected_value,
