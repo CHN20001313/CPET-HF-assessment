@@ -23,7 +23,7 @@ This tool predicts the likelihood of heart failure (HF) after acute myocardial i
 """)
 
 # 创建两列布局，左侧输入，右侧显示预测结果
-col1, col2 = st.columns([1, 2])  # 左侧 1/3, 右侧 2/3
+col1, col2 = st.columns([1, 1])  # 左侧 1/3, 右侧 2/3
 
 # **左侧：输入参数**
 with st.sidebar:
@@ -101,7 +101,6 @@ if predict_button:
             shap_values = explainer.shap_values(pd.DataFrame(input_features, columns=feature_names), tree_limit=13)
 
             # **调整 SHAP 力图**
-    with col2:
         fig, ax = plt.subplots(figsize=(10, 4))
         shap.force_plot(
                 explainer.expected_value,
