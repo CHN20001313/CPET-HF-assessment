@@ -109,5 +109,5 @@ if predict_button:
                 pd.DataFrame(input_features, columns=feature_names),
                 matplotlib=True
             )
-            plt.savefig("shap_force_plot.png", bbox_inches="tight", dpi=1200)
-            st.image("shap_force_plot.png", caption="Feature Contribution (SHAP Force Plot)")
+        plt.savefig("shap_force_plot.png", bbox_inches="tight", dpi=1200)
+        st.image("shap_force_plot.png", caption="Feature Contribution (SHAP Force Plot)")
