@@ -101,9 +101,9 @@ if predict_button:
             shap_values = explainer.shap_values(pd.DataFrame(input_features, columns=feature_names), tree_limit=13)
 
             # **调整 SHAP 力图**
-            with col2:
-            fig, ax = plt.subplots(figsize=(10, 4))
-            shap.force_plot(
+    with col2:
+        fig, ax = plt.subplots(figsize=(10, 4))
+        shap.force_plot(
                 explainer.expected_value,
                 shap_values[0],
                 pd.DataFrame(input_features, columns=feature_names),
