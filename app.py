@@ -37,10 +37,10 @@ with st.sidebar:
     RER = st.sidebar.number_input("Respiratory exchange ratio peak (RERpeak)", min_value=0.0, max_value=2.0, value=1.1,step=0.01)
     CKMB = st.sidebar.number_input("CK-MB (U/L)", min_value=0.0, max_value=100000.0, value=1.0, step=0.1)
     VEVCO2SLOPE = st.sidebar.number_input("Minute ventilation/carbon dioxide production slope (VE/VCO2 slope)", min_value=0.0, max_value=100.0, value=20.0, step=0.1)
-    PETCO2peak = st.sidebar.number_input("peak prtial pressure of end tidal carbon dioxide (PETCO2peak, mmHg)", min_value=10.0, max_value=100.0, value=39.0, step=0.1)
+    PETCO2peak = st.sidebar.number_input("Peak prtial pressure of end tidal carbon dioxide (PETCO2peak, mmHg)", min_value=10.0, max_value=100.0, value=39.0, step=0.1)
     age = st.sidebar.number_input("Age (years)", min_value=0, max_value=150, value=1, step=1)
     VTpeak = st.sidebar.number_input("Peak tidal volume (VT peak, L/min)", min_value=0.0, max_value=10.0, value=2.0, step=0.01)
-    EQCO2peak = st.sidebar.number_input("Peak tidal volume (VT peak, L/min)", min_value=0.0, max_value=100.0, value=31.0,step=0.1)
+    EQCO2peak = st.sidebar.number_input("Peak ventilatory equivalent for carbon dioxide (EQCO2peak, L/min)", min_value=0.0, max_value=100.0, value=31.0,step=0.1)
     Wpeak = st.sidebar.number_input("Power peak (W)", min_value=0.0, max_value=500.0, value=100.0, step=0.1)
     predict_button = st.sidebar.button("Predict")
 
@@ -110,16 +110,10 @@ if predict_button:
                 max_display=14,
                 show=False
             )
-
-            # 增强临床可视化
-            plt.axhline(y=explainer.expected_value, color='red', linestyle='--',
-                        label='Baseline Risk')
-            plt.legend(loc='upper right', fontsize=10)
-
             # 优化显示参数
-            plt.title(f"Individualized HF Risk Explanation\n(Predicted Risk: {predicted_probability * 100:.1f}%)",
+            plt.title(f"Individualized HF Risk Explanation",
                       fontsize=14, pad=20)
-            plt.xlabel("SHAP Value (Log-odds Contribution)", fontsize=12)
+            plt.xlabel("SHAP Value", fontsize=12)
             plt.xticks(fontsize=10, rotation=45, ha='right')
 
             plt.tight_layout()
