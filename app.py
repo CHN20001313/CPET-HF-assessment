@@ -28,31 +28,31 @@ col1, col2 = st.columns([1, 1])  # 左侧 1/3, 右侧 2/3
 # **左侧：输入参数**
 with st.sidebar:
     st.header("Input Features")
-    BNP = st.sidebar.number_input("NT-pro BNP (pg/mL)", min_value=0.0, max_value=100000.0, value=10.0, step=0.1)
     VO2KGPEAK = st.sidebar.number_input("Oxygen consumption peak (VO2 peak, ml/kg/min)", min_value=0.0, max_value=100.0, value=18.0, step=0.1)
-    LVEDD = st.sidebar.number_input("Left Ventricular End-Diastolic Diameter (LVEDD, mm)", min_value=10.0,max_value=100.0, value=45.0, step=0.1)
     EF = st.sidebar.number_input("Ejection fraction (EF, %)", min_value=50.0, max_value=100.0, value=55.0, step=0.1)
-    TNI = st.sidebar.number_input("Troponin I (TNI, μg/L)", min_value=0.0, max_value=100000.0, value=1.0, step=0.01)
+    BNP = st.sidebar.number_input("NT-pro BNP (pg/mL)", min_value=0.0, max_value=100000.0, value=10.0, step=0.1)
     LDH = st.sidebar.number_input("Lactate dehydrogenase (LDH, U/L)", min_value=0.0, max_value=10000.0, value=100.0,step=0.1)
-    RER = st.sidebar.number_input("Respiratory exchange ratio peak (RERpeak)", min_value=0.0, max_value=2.0, value=1.1,step=0.01)
+    LVEDD = st.sidebar.number_input("Left Ventricular End-Diastolic Diameter (LVEDD, mm)", min_value=10.0,max_value=100.0, value=45.0, step=0.1)
     CKMB = st.sidebar.number_input("CK-MB (U/L)", min_value=0.0, max_value=100000.0, value=1.0, step=0.1)
-    VEVCO2SLOPE = st.sidebar.number_input("Minute ventilation/carbon dioxide production slope (VE/VCO2 slope)", min_value=0.0, max_value=100.0, value=20.0, step=0.1)
-    PETCO2peak = st.sidebar.number_input("Peak prtial pressure of end tidal carbon dioxide (PETCO2peak, mmHg)", min_value=10.0, max_value=100.0, value=39.0, step=0.1)
-    age = st.sidebar.number_input("Age (years)", min_value=0, max_value=150, value=1, step=1)
+    VEVCO2SLOPE = st.sidebar.number_input("Minute ventilation/carbon dioxide production slope (VE/VCO2 slope)",min_value=0.0, max_value=100.0, value=20.0, step=0.1)
+    TNI = st.sidebar.number_input("Troponin I (TNI, μg/L)", min_value=0.0, max_value=100000.0, value=1.0, step=0.01)
     VTpeak = st.sidebar.number_input("Peak tidal volume (VT peak, L/min)", min_value=0.0, max_value=10.0, value=2.0, step=0.01)
-    EQCO2peak = st.sidebar.number_input("Peak ventilatory equivalent for carbon dioxide (EQCO2peak)", min_value=0.0, max_value=100.0, value=31.0,step=0.1)
+    EQCO2peak = st.sidebar.number_input("Peak ventilatory equivalent for carbon dioxide (EQCO2peak)", min_value=0.0,max_value=100.0, value=31.0, step=0.1)
+    PETCO2peak = st.sidebar.number_input("Peak prtial pressure of end tidal carbon dioxide (PETCO2peak, mmHg)",min_value=10.0, max_value=100.0, value=39.0, step=0.1)
+    age = st.sidebar.number_input("Age (years)", min_value=0, max_value=150, value=50, step=1)
+    RER = st.sidebar.number_input("Respiratory exchange ratio peak (RERpeak)", min_value=0.0, max_value=2.0, value=1.1,step=0.01)
     Wpeak = st.sidebar.number_input("Power peak (W)", min_value=0.0, max_value=500.0, value=100.0, step=0.1)
     predict_button = st.sidebar.button("Predict")
 
 # **右侧：显示预测结果**
 if predict_button:
     with st.spinner("Calculating..."):
-        time.sleep(2)  # 模拟计算时间
+        time.sleep(1)  # 模拟计算时间
     st.success("Assessment complete!")
 
     # 特征编码
-    feature_names = ["NT-pro BNP", "VO2 peak", "LVEDD", "EF", "TNI", "LDH", "RERpeak", "CKMB", "VE/VCO2 slope", "PETCO2 peak", "Age","VT peak", "EQCO2 peak","Power peak"]
-    encoded_features = [BNP, VO2KGPEAK, LVEDD, EF, TNI, LDH, RER, CKMB, VEVCO2SLOPE, PETCO2peak, age, VTpeak, EQCO2peak, Wpeak]
+    feature_names = ["VO2 peak", "EF", "NT-pro BNP", "LDH", "LVEDD", "CKMB", "VE/VCO2 slope", "TNI", "VT peak", "EQCO2 peak", "PETCO2 peak", "Age", "RERpeak","Power peak"]
+    encoded_features = [VO2KGPEAK, EF, BNP, LDH, LVEDD, CKMB, VEVCO2SLOPE, TNI, VTpeak, EQCO2peak, PETCO2peak, age, RER, Wpeak]
     input_features = np.array(encoded_features).reshape(1, -1)
     dmatrix = xgb.DMatrix(input_features)
 
