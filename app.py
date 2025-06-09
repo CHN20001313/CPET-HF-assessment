@@ -13,13 +13,13 @@ model.load_model("xgboost_model.model")
 st.set_page_config(layout="wide")
 
 # 页面标题和简介
-st.title("CPET Based Post-AMI Heart Failure Probability Predictor")
+st.title("CPET Based Post-MI Heart Failure Probability Predictor")
 st.markdown("""
-This tool predicts the likelihood of heart failure (HF) after acute myocardial infarction (AMI) based on patient characteristics.
+This tool predicts the likelihood of heart failure (HF) after acute myocardial infarction (AMI) based on patient characteristics and CPET results.
 
 **Instructions:**
 - Fill in your details on the left.
-- Click **Predict** to see your HF probability and recommendations.
+- Click **Predict** to see your Post-MI HF probability and recommendations.
 """)
 
 # 创建两列布局，左侧输入，右侧显示预测结果
@@ -28,28 +28,31 @@ col1, col2 = st.columns([1, 1])  # 左侧 1/3, 右侧 2/3
 # **左侧：输入参数**
 with st.sidebar:
     st.header("Input Features")
-    VO2KGPEAK = st.sidebar.number_input("Oxygen consumption peak (VO2 peak, ml/kg/min)", min_value=0.0, max_value=100.0, value=15.0, step=0.1)
-    BNP = st.sidebar.number_input("NT-pro BNP (pg/mL)", min_value=0.0, max_value=100000.0, value=1.0, step=0.1)
+    BNP = st.sidebar.number_input("NT-pro BNP (pg/mL)", min_value=0.0, max_value=100000.0, value=10.0, step=0.1)
+    VO2KGPEAK = st.sidebar.number_input("Oxygen consumption peak (VO2 peak, ml/kg/min)", min_value=0.0, max_value=100.0, value=18.0, step=0.1)
+    LVEDD = st.sidebar.number_input("Left Ventricular End-Diastolic Diameter (LVEDD, mm)", min_value=10.0,max_value=100.0, value=45.0, step=0.1)
     EF = st.sidebar.number_input("Ejection fraction (EF, %)", min_value=50.0, max_value=100.0, value=55.0, step=0.1)
-    VEVCO2SLOPE = st.sidebar.number_input("Minute ventilation/carbon dioxide production slope (VE/VCO2 slope)", min_value=0.0, max_value=100.0, value=20.0, step=0.1)
-    LDH = st.sidebar.number_input("Lactate dehydrogenase (LDH, U/L)", min_value=0.0, max_value=10000.0, value=120.0, step=0.1)
+    TNI = st.sidebar.number_input("Troponin I (TNI, μg/L)", min_value=0.0, max_value=100000.0, value=1.0, step=0.01)
+    LDH = st.sidebar.number_input("Lactate dehydrogenase (LDH, U/L)", min_value=0.0, max_value=10000.0, value=100.0,step=0.1)
+    RER = st.sidebar.number_input("Respiratory exchange ratio peak (RERpeak)", min_value=0.0, max_value=2.0, value=1.1,step=0.01)
     CKMB = st.sidebar.number_input("CK-MB (U/L)", min_value=0.0, max_value=100000.0, value=1.0, step=0.1)
-    LVEDD = st.sidebar.number_input("Left Ventricular End-Diastolic Diameter (LVEDD, mm)", min_value=10.0, max_value=100.0, value=45.0, step=0.1)
-    TNI = st.sidebar.number_input("Troponin I (TNI, μg/L)", min_value=0.0, max_value=100000.0, value=10.0, step=0.1)
+    VEVCO2SLOPE = st.sidebar.number_input("Minute ventilation/carbon dioxide production slope (VE/VCO2 slope)", min_value=0.0, max_value=100.0, value=20.0, step=0.1)
+    PETCO2peak = st.sidebar.number_input("peak prtial pressure of end tidal carbon dioxide (PETCO2peak, mmHg)", min_value=10.0, max_value=100.0, value=39.0, step=0.1)
+    age = st.sidebar.number_input("Age (years)", min_value=0, max_value=150, value=1, step=1)
     VTpeak = st.sidebar.number_input("Peak tidal volume (VT peak, L/min)", min_value=0.0, max_value=10.0, value=2.0, step=0.01)
+    EQCO2peak = st.sidebar.number_input("Peak tidal volume (VT peak, L/min)", min_value=0.0, max_value=100.0, value=31.0,step=0.1)
     Wpeak = st.sidebar.number_input("Power peak (W)", min_value=0.0, max_value=500.0, value=100.0, step=0.1)
-
     predict_button = st.sidebar.button("Predict")
 
 # **右侧：显示预测结果**
 if predict_button:
     with st.spinner("Calculating..."):
-        time.sleep(3)  # 模拟计算时间
-    st.success("Calculation complete!")
+        time.sleep(2)  # 模拟计算时间
+    st.success("Assessment complete!")
 
     # 特征编码
-    feature_names = ["VO2 peak", "NT-pro BNP", "EF", "VE/VCO2 slope", "LDH", "CKMB", "LVEDD", "TNI", "VT peak", "Power peak"]
-    encoded_features = [VO2KGPEAK, BNP, EF, VEVCO2SLOPE, LDH, CKMB, LVEDD, TNI, VTpeak, Wpeak]
+    feature_names = ["NT-pro BNP", "VO2 peak", "LVEDD", "EF", "TNI", "LDH", "RERpeak", "CKMB", "VE/VCO2 slope", "PETCO2 peak", "Age","VT peak", "EQCO2 peak","Power peak"]
+    encoded_features = [BNP, VO2KGPEAK, LVEDD, EF, EF, TNI, LDH, RER, CKMB, VEVCO2SLOPE, PETCO2peak, age, VTpeak, EQCO2peak, VTpeak, Wpeak]
     input_features = np.array(encoded_features).reshape(1, -1)
     dmatrix = xgb.DMatrix(input_features)
 
@@ -58,19 +61,12 @@ if predict_button:
     predicted_probability = probabilities[0]
 
     # 风险分组逻辑
-    if predicted_probability < 0.172039:
-        risk_group = "Low HF Probability"
+    if predicted_probability < 0.381445:
+        risk_group = "Low Post-MI HF Probability"
         risk_color = "green"
         advice = "You have a low probability of HF."
-    elif 0.172039 <= predicted_probability <= 0.478812:
-        risk_group = "Medium HF Probability"
-        risk_color = "orange"
-        advice = (
-            "Your probability of HF is moderate. It is recommended to monitor your health closely "
-            "and consider consulting a healthcare professional for further evaluation."
-        )
     else:
-        risk_group = "High HF Probability"
+        risk_group = "High Post-MI HF Probability"
         risk_color = "red"
         advice = (
             "You have a high probability of HF. Please consult a healthcare professional as soon as possible "
@@ -98,15 +94,23 @@ if predict_button:
             )
 
             explainer = shap.TreeExplainer(model)
-            shap_values = explainer.shap_values(pd.DataFrame(input_features, columns=feature_names), tree_limit=13)
+            shap_values = explainer(pd.DataFrame(input_features, columns=feature_names), tree_limit=13)
 
-            # **调整 SHAP 力图**
-        fig, ax = plt.subplots(figsize=(10, 4))
-        shap.force_plot(
-                explainer.expected_value,
+            # **SHAP 瀑布图配置**
+            plt.figure(figsize=(12, 6))
+            shap.plots.waterfall(
                 shap_values[0],
-                pd.DataFrame(input_features, columns=feature_names),
-                matplotlib=True
+                max_display=14,  # 展示全部变量（按绝对值排序）
+                show=False  # 关闭自动显示
             )
-        plt.savefig("shap_force_plot.png", bbox_inches="tight", dpi=1200)
-        st.image("shap_force_plot.png", caption="Feature Contribution (SHAP Force Plot)")
+
+            # 优化图形参数
+            plt.gcf().set_size_inches(12, 8)
+            plt.title("Individual Prediction Explanation", fontsize=14, pad=20)
+            plt.xlabel("SHAP value (impact on prediction)", fontsize=12)
+            plt.xticks(fontsize=10, rotation=45, ha='right')
+            plt.tight_layout()
+
+            # 保存并显示
+            plt.savefig("shap_waterfall.png", bbox_inches="tight", dpi=300)
+            st.image("shap_waterfall.png", caption="SHAP Waterfall Plot (Full Feature Display)")
