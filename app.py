@@ -94,7 +94,7 @@ if predict_button:
             )
 
             explainer = shap.TreeExplainer(model)
-            shap_values = explainer(pd.DataFrame(input_features, columns=feature_names), tree_limit=49)
+            shap_values = explainer.shap_values(pd.DataFrame(input_features, columns=feature_names), tree_limit=49)
 
             # **SHAP 瀑布图配置**
             plt.figure(figsize=(12, 6))
