@@ -57,7 +57,7 @@ if predict_button:
     dmatrix = xgb.DMatrix(input_features)
 
     # 预测概率
-    probabilities = model.predict(dmatrix, iteration_range=(0, 13))
+    probabilities = model.predict(dmatrix, iteration_range=(0, 49))
     predicted_probability = probabilities[0]
 
     # 风险分组逻辑
