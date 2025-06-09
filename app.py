@@ -76,7 +76,7 @@ if predict_button:
     # **显示结果在右侧**
     with col1:
         with st.container():
-            st.header("Prediction Results")
+            st.header("Assessment Results")
             st.markdown(
                 f"<h3 style='color:{risk_color};'>Risk Group: {risk_group}</h3>",
                 unsafe_allow_html=True
@@ -94,7 +94,7 @@ if predict_button:
             )
 
             explainer = shap.TreeExplainer(model)
-            shap_values = explainer(pd.DataFrame(input_features, columns=feature_names), tree_limit=13)
+            shap_values = explainer(pd.DataFrame(input_features, columns=feature_names), tree_limit=49)
 
             # **SHAP 瀑布图配置**
             plt.figure(figsize=(12, 6))
