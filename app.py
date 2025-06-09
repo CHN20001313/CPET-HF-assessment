@@ -96,21 +96,32 @@ if predict_button:
             explainer = shap.TreeExplainer(model)
             shap_values = explainer.shap_values(pd.DataFrame(input_features, columns=feature_names), tree_limit=49)
 
-            # **SHAP 瀑布图配置**
-            plt.figure(figsize=(12, 6))
-            shap.plots.waterfall(
-                shap_values[0],
-                max_display=14,  # 展示全部变量（按绝对值排序）
-                show=False  # 关闭自动显示
+            explanation = shap.Explanation(
+                values=shap_values[0],
+                base_values=explainer.expected_value,
+                feature_names=feature_names,
+                data=input_features[0],  # 显示实际数值
+                output_names=["HF Risk"]  # 定义输出维度
             )
 
-            # 优化图形参数
-            plt.gcf().set_size_inches(12, 8)
-            plt.title("Individual Prediction Explanation", fontsize=14, pad=20)
-            plt.xlabel("SHAP value (impact on prediction)", fontsize=12)
-            plt.xticks(fontsize=10, rotation=45, ha='right')
-            plt.tight_layout()
+            plt.figure(figsize=(12, 6))
+            shap.plots.waterfall(
+                explanation,
+                max_display=14,
+                show=False
+            )
 
-            # 保存并显示
-            plt.savefig("shap_waterfall.png", bbox_inches="tight", dpi=300)
-            st.image("shap_waterfall.png", caption="SHAP Waterfall Plot (Full Feature Display)")
+            # 增强临床可视化
+            plt.axhline(y=explainer.expected_value, color='red', linestyle='--',
+                        label='Baseline Risk')
+            plt.legend(loc='upper right', fontsize=10)
+
+            # 优化显示参数
+            plt.title(f"Individualized HF Risk Explanation\n(Predicted Risk: {predicted_probability * 100:.1f}%)",
+                      fontsize=14, pad=20)
+            plt.xlabel("SHAP Value (Log-odds Contribution)", fontsize=12)
+            plt.xticks(fontsize=10, rotation=45, ha='right')
+
+            plt.tight_layout()
+            plt.savefig("shap_waterfall.png", dpi=300, bbox_inches="tight")
+            st.image("shap_waterfall.png")
