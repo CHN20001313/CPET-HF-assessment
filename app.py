@@ -40,7 +40,7 @@ with st.sidebar:
     PETCO2peak = st.sidebar.number_input("Peak prtial pressure of end tidal carbon dioxide (PETCO2peak, mmHg)", min_value=10.0, max_value=100.0, value=39.0, step=0.1)
     age = st.sidebar.number_input("Age (years)", min_value=0, max_value=150, value=1, step=1)
     VTpeak = st.sidebar.number_input("Peak tidal volume (VT peak, L/min)", min_value=0.0, max_value=10.0, value=2.0, step=0.01)
-    EQCO2peak = st.sidebar.number_input("Peak ventilatory equivalent for carbon dioxide (EQCO2peak, L/min)", min_value=0.0, max_value=100.0, value=31.0,step=0.1)
+    EQCO2peak = st.sidebar.number_input("Peak ventilatory equivalent for carbon dioxide (EQCO2peak)", min_value=0.0, max_value=100.0, value=31.0,step=0.1)
     Wpeak = st.sidebar.number_input("Power peak (W)", min_value=0.0, max_value=500.0, value=100.0, step=0.1)
     predict_button = st.sidebar.button("Predict")
 
