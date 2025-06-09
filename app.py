@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import shap
 import xgboost as xgb
 import time
-# 加载 JSON 格式模型
+# 加载模型
 model = xgb.Booster()
 model.load_model("xgboost_model.model")
 
@@ -52,7 +52,7 @@ if predict_button:
 
     # 特征编码
     feature_names = ["NT-pro BNP", "VO2 peak", "LVEDD", "EF", "TNI", "LDH", "RERpeak", "CKMB", "VE/VCO2 slope", "PETCO2 peak", "Age","VT peak", "EQCO2 peak","Power peak"]
-    encoded_features = [BNP, VO2KGPEAK, LVEDD, EF, EF, TNI, LDH, RER, CKMB, VEVCO2SLOPE, PETCO2peak, age, VTpeak, EQCO2peak, VTpeak, Wpeak]
+    encoded_features = [BNP, VO2KGPEAK, LVEDD, EF, TNI, LDH, RER, CKMB, VEVCO2SLOPE, PETCO2peak, age, VTpeak, EQCO2peak, Wpeak]
     input_features = np.array(encoded_features).reshape(1, -1)
     dmatrix = xgb.DMatrix(input_features)
 
